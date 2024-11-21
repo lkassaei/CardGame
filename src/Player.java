@@ -48,6 +48,33 @@ public class Player {
         this.hand.add(card);
     }
 
+    public void removeCard(Card card) {
+        this.hand.remove(card);
+    }
+
+    public void findMostFrequentCard() {
+        int repeats = 0;
+        for (int i = 0; i < this.hand.size(); i++) {
+            Card card = this.hand.get(i);
+            for (int j = 0; j < this.hand.size() - 1; i++) {
+
+            }
+        }
+    }
+
+    public ArrayList<Card> checkHand(String cardRank) {
+        ArrayList<Card> cards = new ArrayList<Card>();
+        for (int i = 0; i < this.hand.size(); i++) {
+            Card c = this.hand.get(i);
+            if (c.getRank().equals(cardRank)) {
+                cards.add(c);
+            }
+        }
+        return cards;
+    }
+
+
+
     @Override
     public String toString() {
         return this.name + " has " + this.points + " points\n" + this.name + "'s cards: " + this.hand;
