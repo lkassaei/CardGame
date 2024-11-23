@@ -52,14 +52,33 @@ public class Player {
         this.hand.remove(card);
     }
 
-    public void findMostFrequentCard() {
-        int repeats = 0;
-        for (int i = 0; i < this.hand.size(); i++) {
-            Card card = this.hand.get(i);
-            for (int j = 0; j < this.hand.size() - 1; i++) {
+    public Card findMostFrequentCard() {
+        if (hand == null || hand.isEmpty()) {
+            return null; // Return null if the hand is empty
+        }
 
+        Card mostFrequent = null;
+        int maxFrequency = 0;
+
+        for (int i = 0; i < hand.size(); i++) {
+            Card currentCard = hand.get(i);
+            int frequency = 0;
+
+            // Count how many times currentCard appears in the hand
+            for (int j = 0; j < hand.size(); j++) {
+                if (hand.get(j).equals(currentCard)) {
+                    frequency++;
+                }
+            }
+
+            // Update the most frequent card if the current one has a higher frequency
+            if (frequency > maxFrequency) {
+                maxFrequency = frequency;
+                mostFrequent = currentCard;
             }
         }
+
+        return mostFrequent;
     }
 
     public ArrayList<Card> checkHand(String cardRank) {
@@ -72,7 +91,6 @@ public class Player {
         }
         return cards;
     }
-
 
 
     @Override

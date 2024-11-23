@@ -37,13 +37,14 @@ public class Game {
         startRound();
     }
     public void startRound() {
+
         playerTurn();
         computerTurn();
     }
 
     public void playerTurn() {
         System.out.println("Your hand: " + this.player1.getHand() + "\n");
-        System.out.println("What card?\n");
+        System.out.println("What card do you want?\n");
         Scanner scanner = new Scanner(System.in);
         String cardRank = scanner.nextLine();
         ArrayList<Card> result = this.computer.checkHand(cardRank);
@@ -52,21 +53,23 @@ public class Game {
             this.computer.removeCard(card);
             this.computer.addCard(this.deck.deal());
         }
-        System.out.println("Your hand: " + this.player1.getHand() + "\n");
+        if (result.contains(null)) {
+            System.out.println("Go Fish! You will draw a card\n");
+            this.player1.addCard(deck.deal());
+        }
+        System.out.println("Your hand now: " + this.player1.getHand() + "\n");
     }
 
     public void computerTurn() {
-        System.out.println("Your hand: " + this.player1.getHand() + "\n");
-        System.out.println("What card?\n");
-        Scanner scanner = new Scanner(System.in);
-        String cardRank = scanner.nextLine();
-        ArrayList<Card> result = this.computer.checkHand(cardRank);
+        Card cardRank = this.computer.findMostFrequentCard();
+        System.out.println("Do you have a " + cardRank.getRank() + " ?\n");
+        ArrayList<Card> result = this.player1.checkHand(cardRank.getRank());
         for (Card card : result) {
-            this.player1.addCard(card);
-            this.computer.removeCard(card);
-            this.computer.addCard(this.deck.deal());
+            this.computer.addCard(card);
+            this.player1.removeCard(card);
+            this.player1.addCard(this.deck.deal());
         }
-        System.out.println("Your hand: " + this.player1.getHand() + "\n");
+        System.out.println("Your hand now: " + this.player1.getHand() + "\n");
     }
 
     public static void main(String[] args) {
