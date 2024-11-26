@@ -1,7 +1,13 @@
+// Go Fish game by Lily Kassaei
+// This file defines the game class that handles the main game logic and setup.
+
+// Import needed libraries
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Game {
+    // Declare all instance variables including players for player1 and computer, a deck,
+    // And the ranks, suits, and values that go in that deck
     private Player player1;
     private Player computer;
     private Deck deck;
@@ -9,7 +15,9 @@ public class Game {
     private final String[] suits = {"Hearts", "Diamonds", "Clubs", "Spades"};
     private final int[] values = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
+    // Constructs the players and their hands
     public Game() {
+        // Get name of the player
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("====================");
@@ -18,16 +26,23 @@ public class Game {
         System.out.println("--------> ");
 
         String name1 = scanner.nextLine();
+
+        // Make players for the real player and computer
         this.player1 = new Player(name1);
         this.computer = new Player("Computer");
 
+        // Make a full deck for the game
         this.deck = new Deck(this.ranks, this.suits, this.values);
+
+        // Make hands for the player and computer
         ArrayList<Card> playerHand = new ArrayList<Card>();
         ArrayList<Card> computerHand = new ArrayList<Card>();
+        // Deal 7 cards into each hand
         for (int i = 0; i < 7; i++) {
            playerHand.add(deck.deal());
            computerHand.add(deck.deal());
         }
+        // Set and sort the player and computer's hands
         player1.setHand(playerHand);
         computer.setHand(computerHand);
         player1.sortHand();
@@ -36,6 +51,7 @@ public class Game {
 
 
     public static void printInstructions() {
+        // Make Ascii art of "Welcome to Go Fish!" and print the game rules
         System.out.println(" __          __  _                             _            _____          ______ _     _         _  ");
         System.out.println(" \\ \\        / / | |                           | |          / ____|        |  ____(_)   | |       | | ");
         System.out.println("  \\ \\  /\\  / /__| | ___ ___  _ __ ___   ___   | |_ ___    | |  __  ___    | |__   _ ___| |__     | | ");
@@ -58,10 +74,12 @@ public class Game {
 
     }
 
+    // Play the game by starting the rounds
     public void playGame() {
         startRound();
     }
     public void startRound() {
+        // Keep on alternating computer and player turns until someone has won
         while (!isGameDone()) {
             playerTurn();
             computerTurn();
@@ -69,6 +87,7 @@ public class Game {
         checkWin();
     }
 
+    // Check if all quads have been collected
     public boolean isGameDone() {
         if (this.computer.getQuads().size() + this.player1.getQuads().size() == 13) {
             return true;
@@ -76,6 +95,7 @@ public class Game {
         return false;
     }
 
+    // Check who has the most quads and declare them as the winner
     public void checkWin() {
         if (this.computer.getQuads().size() > this.player1.getQuads().size()) {
             System.out.println("COMPUTER WINS!");
@@ -85,6 +105,7 @@ public class Game {
         }
     }
 
+    // Make sure input when asking for a card is valid by making sure the player has that card in their hand
     public boolean checkValidMove(Player p, String cardRank) {
         for (Card c : p.getHand()) {
             if (c.getRank().equals(cardRank)) {
@@ -94,8 +115,10 @@ public class Game {
         return false;
     }
 
+    // Runs turn for when the player asks the computer for a card rank
     public void playerTurn() {
         String cardRank = "";
+        // Gets the input and re-prompts until input is valid
         while (true) {
             System.out.println(this.player1.getName() + "'s hand: " + this.player1.getHand() + "\n");
             System.out.print("What card number/royal do you want?\n");
@@ -108,18 +131,23 @@ public class Game {
             }
             break;
         }
+        // When input is valid
         ArrayList<Card> result = this.computer.checkHand(cardRank);
+        // If the computer does not have the card rank the player asked for, it says "Go fish!" and the player draws
         if (result.isEmpty()) {
             System.out.println("Go Fish! " + this.player1.getName() + " will draw a card\n");
             this.player1.addCard(deck.deal());
         } else {
+            // The computer gives all of their cards of the rank the player asked for to the player
             for (Card card : result) {
                 this.player1.addCard(card);
                 this.computer.removeCard(card);
+                // The computer draws the amount of cards it gave to the player
                 this.computer.addCard(this.deck.deal());
             }
             System.out.println(this.player1.getName() + " took all of the computer's " + cardRank + "'s ." + "The computer will draw.");
         }
+        // Checks if the player has four-of-a-kind, and if they do, takes those cards out of their hand and puts them in their Quad Array
         Card card = player1.checkQuad();
         if (card != null) {
             System.out.println(this.player1.getName() + " has all the " + card.getRank() + "s! They will be removed from " + this.player1.getName() + "'s hand.");
@@ -131,6 +159,7 @@ public class Game {
                 }
             }
         }
+        // Prints out the quads of the player and computer, sorts their hands, and prints the player's hand
         System.out.println("Computer's Quads: " + this.computer.getQuads() + "  |  " + this.player1.getName() + "'s Quads: " + this.player1.getQuads());
         player1.sortHand();
         computer.sortHand();
@@ -138,13 +167,17 @@ public class Game {
 
     }
 
+    // Runs turn for when the computer asks the player for a card
     public void computerTurn() {
+        // The computer asks for a card rank based on the most frequent card in its hand
         Card cardRank = this.computer.findMostFrequentCard();
         System.out.println("Computer: Do you have a " + cardRank.getRank() + " ?\n");
         ArrayList<Card> result = this.player1.checkHand(cardRank.getRank());
+        // If the player does not have the card the computer asked for, the computer draws
         if (result.isEmpty()) {
             System.out.println(this.player1.getName() + " did not have a " + cardRank.getRank() + ". The computer will draw.");
         }
+        // If the player does have the rank the computer asked for, the computer takes the players cards of that rank
         else {
             for (Card card : result) {
                 this.computer.addCard(card);
@@ -153,24 +186,30 @@ public class Game {
             }
             System.out.println("The computer took all of " + this.player1.getName() + "'s " + cardRank.getRank() + "s. " + this.player1.getName() + "  will draw.");
         }
+        // Checks if the computer has any four-of-a-kinds
         Card card = this.computer.checkQuad();
+        // If it does, takes those four cards out of the computer's hand and puts them in its quad Array
         if (card != null) {
             System.out.println(this.computer.getName() + " has all the " + card.getRank() + "s! They will be removed from " + this.computer.getName() + "'s hand.");
             computer.addQuad(card.getRank());
             for (int i = 0; i < computer.getHand().size(); i++) {
-                if (computer.getHand().get(i).getRank().equals(card.getRank())) {
+                Card currentCard = computer.getHand().get(i);
+                if (currentCard != null && currentCard.getRank().equals(card.getRank())) {
                     computer.getHand().remove(i);
                     i--;
                 }
             }
         }
+        // Prints the computer's and player's quads, sorts their hands, and prints the players hand now
         System.out.println("Computer's Quads: " + this.computer.getQuads() + "  |  " + this.player1.getName() + "'s Quads: " + this.player1.getQuads());
         player1.sortHand();
         computer.sortHand();
         System.out.println(this.player1.getName() + "'s hand now: " + this.player1.getHand() + "\n");
     }
 
+    // Main method
     public static void main(String[] args) {
+        // Prints the instructions, creates a new game, and plays that game
         printInstructions();
         Game g1 = new Game();
         g1.playGame();
