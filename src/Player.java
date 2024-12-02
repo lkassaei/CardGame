@@ -84,32 +84,40 @@ public class Player {
 
     // Finds the most frequent card in a player's hand
     public Card findMostFrequentCard() {
-        if (hand == null || hand.isEmpty()) {
-            return null; // Return null if the hand is empty
+        int num = (int)((Math.random() * 2) + 1);
+
+        if (num == 1) {
+            int randRank = (int)(Math.random() * hand.size());
+            return hand.get(randRank);
         }
+        else {
+            if (hand == null || hand.isEmpty()) {
+                return null; // Return null if the hand is empty
+            }
 
-        Card mostFrequent = null;
-        int maxFrequency = 0;
+            Card mostFrequent = null;
+            int maxFrequency = 0;
 
-        for (int i = 0; i < hand.size(); i++) {
-            Card currentCard = hand.get(i);
-            int frequency = 0;
+            for (int i = 0; i < hand.size(); i++) {
+                Card currentCard = hand.get(i);
+                int frequency = 0;
 
-            // Count how many times currentCard appears in the hand
-            for (int j = 0; j < hand.size(); j++) {
-                if (hand.get(j).equals(currentCard)) {
-                    frequency++;
+                // Count how many times currentCard appears in the hand
+                for (int j = 0; j < hand.size(); j++) {
+                    if (hand.get(j).equals(currentCard)) {
+                        frequency++;
+                    }
+                }
+
+                // Update the most frequent card if the current one has a higher frequency
+                if (frequency > maxFrequency) {
+                    maxFrequency = frequency;
+                    mostFrequent = currentCard;
                 }
             }
 
-            // Update the most frequent card if the current one has a higher frequency
-            if (frequency > maxFrequency) {
-                maxFrequency = frequency;
-                mostFrequent = currentCard;
-            }
+            return mostFrequent;
         }
-
-        return mostFrequent;
     }
 
     // Checks if a player has a card/cards with the given rank and returns all cards that match

@@ -79,9 +79,14 @@ public class Game {
         startRound();
     }
     public void startRound() {
+        Scanner scanner = new Scanner(System.in);
         // Keep on alternating computer and player turns until someone has won
         while (!isGameDone()) {
+            System.out.println("Ready for your turn? Press ENTER\n");
+            scanner.nextLine();
             playerTurn();
+            System.out.println("Ready for next turn? Press ENTER\n");
+            scanner.nextLine();
             computerTurn();
         }
         checkWin();
