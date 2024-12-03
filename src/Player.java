@@ -74,6 +74,10 @@ public class Player {
 
     // Gives a card to a player's hand
     public void addCard(Card card) {
+        if(card == null)
+        {
+            System.out.println("Sad");
+        }
         this.hand.add(card);
     }
 

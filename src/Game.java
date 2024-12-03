@@ -85,9 +85,11 @@ public class Game {
             System.out.println("Ready for your turn? Press ENTER\n");
             scanner.nextLine();
             playerTurn();
+            isGameDone();
             System.out.println("Ready for next turn? Press ENTER\n");
             scanner.nextLine();
             computerTurn();
+            isGameDone();
         }
         checkWin();
     }
@@ -148,9 +150,22 @@ public class Game {
                 this.player1.addCard(card);
                 this.computer.removeCard(card);
                 // The computer draws the amount of cards it gave to the player
-                this.computer.addCard(this.deck.deal());
+                if (!this.deck.isEmpty()) {
+                    this.computer.addCard(this.deck.deal());
+                }
             }
             System.out.println(this.player1.getName() + " took all of the computer's " + cardRank + "'s ." + "The computer will draw.");
+            Card card = computer.checkQuad();
+            if (card != null) {
+                System.out.println(this.computer.getName() + " has all the " + card.getRank() + "s! They will be removed from the computer's hand.");
+                computer.addQuad(card.getRank());
+                for (int i = 0; i < computer.getHand().size(); i++) {
+                    if (computer.getHand().get(i).getRank().equals(card.getRank())) {
+                        computer.getHand().remove(i);
+                        i--;
+                    }
+                }
+            }
         }
         // Checks if the player has four-of-a-kind, and if they do, takes those cards out of their hand and puts them in their Quad Array
         Card card = player1.checkQuad();
@@ -187,9 +202,22 @@ public class Game {
             for (Card card : result) {
                 this.computer.addCard(card);
                 this.player1.removeCard(card);
-                this.player1.addCard(this.deck.deal());
+                if (!this.deck.isEmpty()) {
+                    this.player1.addCard(this.deck.deal());
+                }
             }
             System.out.println("The computer took all of " + this.player1.getName() + "'s " + cardRank.getRank() + "s. " + this.player1.getName() + "  will draw.");
+            Card card = player1.checkQuad();
+            if (card != null) {
+                System.out.println(this.player1.getName() + " has all the " + card.getRank() + "s! They will be removed from " + this.player1.getName() + "'s hand.");
+                player1.addQuad(card.getRank());
+                for (int i = 0; i < player1.getHand().size(); i++) {
+                    if (player1.getHand().get(i).getRank().equals(card.getRank())) {
+                        player1.getHand().remove(i);
+                        i--;
+                    }
+                }
+            }
         }
         // Checks if the computer has any four-of-a-kinds
         Card card = this.computer.checkQuad();
