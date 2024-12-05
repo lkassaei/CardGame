@@ -185,9 +185,6 @@ public class Game {
             computer.sortHand();
             System.out.println(this.player1.getName() + "'s hand now: " + this.player1.getHand() + "\n");
         }
-        else {
-            checkWin();
-        }
     }
 
     // Runs turn for when the computer asks the player for a card
@@ -242,9 +239,6 @@ public class Game {
             player1.sortHand();
             computer.sortHand();
             System.out.println(this.player1.getName() + "'s hand now: " + this.player1.getHand() + "\n");
-        }
-        else {
-            checkWin();
         }
     }
 
