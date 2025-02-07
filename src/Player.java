@@ -152,6 +152,15 @@ public class Player {
         return null; // No quad found.
     }
 
+    public void removeQuad(Player player, String cardRank) {
+        for (int i = 0; i < player.getHand().size(); i++) {
+            if (player.getHand().get(i).getRank().equals(cardRank)) {
+                player.getHand().remove(i);
+                i--;
+            }
+        }
+    }
+
     // Sorts a player's hand with Ace being the smallest up to King
     public void sortHand() {
         // Remove null values first
