@@ -1,17 +1,23 @@
 // Go Fish game by Lily Kassaei
 // This file defines the Card Class which creates cards for the deck
 
+import java.awt.*;
+
 public class Card {
     // Declare instance variables
     private String rank;
     private String suit;
     private int value;
+    private Image image;
+    private GameViewer window;
 
     // Constructs a card with a rank, suit, and value
-    public Card(String rank, String suit, int value) {
+    public Card(String rank, String suit, int value, Image image, GameViewer window) {
         this.rank = rank;
         this.suit = suit;
         this.value = value;
+        this.image = image;
+        this.window = window;
     }
 
     // Accesses the rank of a card
@@ -34,6 +40,10 @@ public class Card {
         this.suit = suit;
     }
 
+    public Image getImage() {
+        return image;
+    }
+
     // Accesses the value of a card
     public int getValue() {
         return value;
@@ -48,5 +58,9 @@ public class Card {
     @Override
     public String toString() {
         return this.rank + " of " + this.suit;
+    }
+
+    public void draw(Graphics g) {
+        g.drawImage(image, 100, 100, window);
     }
 }

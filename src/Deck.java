@@ -2,23 +2,28 @@
 // This file defines the Deck Class which creates a deck for the players
 
 // Import needed libraries
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Deck {
     // Declare instance variables
     private ArrayList<Card> cards;
     private int cardsLeft;
+    private GameViewer window;
 
     // Constructor that takes all the ranks, suits, and values in a deck and creates 52 cards from them
-    public Deck(String[] ranks, String[] suits, int[] values) {
+    public Deck(String[] ranks, String[] suits, int[] values, GameViewer window) {
         this.cards = new ArrayList<>();
-
-        for (String suit: suits) {
-            for (int i = 0; i < ranks.length; i++) {
-                String rank = ranks[i];
+        int counter = 1;
+        for (int i = 0; i <ranks.length; i++) {
+            for (int j = 0; j < suits.length; j++) {
+                String file = counter + ".png";
+                Image image = new ImageIcon("Resources/Cards/" + file).getImage();
                 int value = values[i];
-                Card c = new Card(rank, suit, value);
+                Card c = new Card(ranks[i], suits[j], value, image, window);
                 cards.add(c);
+                counter++;
             }
         }
         this.cardsLeft = cards.size();

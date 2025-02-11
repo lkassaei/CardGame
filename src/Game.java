@@ -10,14 +10,23 @@ public class Game {
     // And the ranks, suits, and values that go in that deck
     private Player player1;
     private Player computer;
+    private Player winningPlayer;
     private Deck deck;
     private final String[] ranks = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
-    private final String[] suits = {"Hearts", "Diamonds", "Clubs", "Spades"};
+    private final String[] suits = {"Spades", "Hearts", "Diamonds", "Clubs"};
     private final int[] values = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+    private GameViewer window;
+    private int state;
+    public static final int INSTRUCTION_STATE = 0;
+    public static final int MAIN_STATE = 1;
+    public static final int GAME_OVER_STATE = 2;
+
 
     // Constructs the players and their hands
     public Game() {
         // Get name of the player
+        window = new GameViewer(this);
+        this.state = 0;
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("====================");
@@ -32,7 +41,7 @@ public class Game {
         this.computer = new Player("Computer");
 
         // Make a full deck for the game
-        this.deck = new Deck(this.ranks, this.suits, this.values);
+        this.deck = new Deck(this.ranks, this.suits, this.values, this.window);
 
         // Make hands for the player and computer
         ArrayList<Card> playerHand = new ArrayList<Card>();
@@ -47,8 +56,20 @@ public class Game {
         computer.setHand(computerHand);
         player1.sortHand();
         computer.sortHand();
+        window.repaint();
     }
 
+    public Player getWinningPlayer() {
+        return this.winningPlayer;
+    }
+
+    public int getState() {
+        return this.state;
+    }
+
+    public Deck getDeck() {
+        return this.deck;
+    }
 
     public static void printInstructions() {
         // Make Ascii art of "Welcome to Go Fish!" and print the game rules
@@ -76,6 +97,7 @@ public class Game {
 
     public void startRound() {
         while (!isGameDone()) {
+            this.state = 1;
             Scanner scanner = new Scanner(System.in);
             // Keep on alternating computer and player turns until someone has won
             System.out.println("Ready for your turn? Press ENTER\n");
@@ -99,9 +121,13 @@ public class Game {
     // Check who has the most quads and declare them as the winner
     public void checkWin() {
         if (this.computer.getQuads().size() > this.player1.getQuads().size()) {
+            this.winningPlayer = computer;
+            this.state = 2;
             System.out.println("COMPUTER WINS!");
         }
         else {
+            this.winningPlayer = player1;
+            this.state = 2;
             System.out.println(player1.getName() + " WINS!");
         }
     }
