@@ -71,6 +71,14 @@ public class Game {
         return this.deck;
     }
 
+    public Player getPlayer1() {
+        return this.player1;
+    }
+
+    public Player getComputer() {
+        return this.computer;
+    }
+
     public static void printInstructions() {
         // Make Ascii art of "Welcome to Go Fish!" and print the game rules
         System.out.println(" __          __  _                             _            _____          ______ _     _         _  ");
@@ -168,6 +176,7 @@ public class Game {
             if (result.isEmpty()) {
                 System.out.println("Go Fish! " + otherPlayer.getName() + " did not have a " + cardRank + ". " + currentPlayer.getName() + " will draw.");
                 currentPlayer.addCard(this.deck.deal());
+                window.repaint();
             }
             else {
                 // The other player gives all of their cards of the rank the current player asked for
@@ -180,6 +189,8 @@ public class Game {
                     }
                 }
                 System.out.println(currentPlayer.getName() + " took all of the " + otherPlayer.getName() + "'s " + cardRank + "s. " + otherPlayer.getName() + " will draw.");
+                window.repaint();
+
                 Card quadCard = otherPlayer.checkQuad();
                 if (quadCard != null) {
                     System.out.println(otherPlayer.getName() + " has all the " + quadCard.getRank() + "s! They will be removed from " + otherPlayer.getName() + "'s hand.");
@@ -194,12 +205,14 @@ public class Game {
                 System.out.println(currentPlayer.getName() + " has all the " + quadCard.getRank() + "s! They will be removed from " + currentPlayer.getName() + "'s hand.");
                 currentPlayer.addQuad(quadCard.getRank());
                 currentPlayer.removeQuad(currentPlayer, quadCard.getRank());
+                window.repaint();
             }
             // Prints the computer's and player's quads, sorts their hands, and prints the players hand now
             System.out.println("Computer's Quads: " + this.computer.getQuads() + "  |  " + this.player1.getName() + "'s Quads: " + this.player1.getQuads());
             player1.sortHand();
             computer.sortHand();
             System.out.println(this.player1.getName() + "'s hand now: " + this.player1.getHand() + "\n");
+            window.repaint();
         }
     }
 
