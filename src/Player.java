@@ -47,6 +47,7 @@ public class Player {
         this.hand = hand;
     }
 
+
     // Gets the points a player has
     public int getPoints() {
         return this.points;

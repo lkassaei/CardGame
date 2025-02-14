@@ -138,6 +138,7 @@ public class Game {
             this.state = 2;
             System.out.println(player1.getName() + " WINS!");
         }
+        window.repaint();
     }
 
     // Make sure input when asking for a card is valid by making sure the player has that card in their hand
@@ -175,7 +176,9 @@ public class Game {
             ArrayList<Card> result = otherPlayer.checkHand(cardRank);
             if (result.isEmpty()) {
                 System.out.println("Go Fish! " + otherPlayer.getName() + " did not have a " + cardRank + ". " + currentPlayer.getName() + " will draw.");
-                currentPlayer.addCard(this.deck.deal());
+                if (!deck.isEmpty()) {
+                    currentPlayer.addCard(this.deck.deal());
+                }
                 window.repaint();
             }
             else {
@@ -186,6 +189,7 @@ public class Game {
                     // The other player draws the amount of cards it gave to the current player
                     if (!this.deck.isEmpty()) {
                         otherPlayer.addCard(this.deck.deal());
+
                     }
                 }
                 System.out.println(currentPlayer.getName() + " took all of the " + otherPlayer.getName() + "'s " + cardRank + "s. " + otherPlayer.getName() + " will draw.");

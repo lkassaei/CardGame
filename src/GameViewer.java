@@ -2,10 +2,13 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GameViewer extends JFrame{
-    private Image backgroundImage;
+    private Image startBackgroundImage;
+    private Image fishy;
+    private Image computerIcon;
+    private Image playerIcon;
     private final int WINDOW_WIDTH = 1000;
     private final int WINDOW_HEIGHT = 1000;
-    private final int HEIGHT_MARGIN = 500;
+    private final int HEIGHT_MARGIN = 700;
     private final int WIDTH_MARGIN = 50;
     private final int CARD_WIDTH = 50;
     private final int CARD_HEIGHT = 100;
@@ -13,7 +16,10 @@ public class GameViewer extends JFrame{
 
     public GameViewer(Game game) {
         this.game = game;
-        backgroundImage = new ImageIcon("Resources/GoFishStart.png").getImage();
+        startBackgroundImage = new ImageIcon("Resources/GoFishStart.png").getImage();
+        fishy = new ImageIcon("Resources/fishy.png").getImage();
+        computerIcon = new ImageIcon("Resources/ComputerIcon.jpg").getImage();
+        playerIcon = new ImageIcon("Resources/PlayerIcon.jpg").getImage();
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setTitle("Card Game");
         this.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -33,7 +39,7 @@ public class GameViewer extends JFrame{
     }
 
     public void paintInstructions(Graphics g) {
-        g.drawImage(this.backgroundImage, 0, 0, WINDOW_WIDTH, WINDOW_WIDTH, this);
+        g.drawImage(this.startBackgroundImage, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, this);
         g.setColor(Color.black);
         g.setColor(Color.WHITE);
         g.setFont(new Font("Courier New", Font.BOLD, 27));
@@ -47,29 +53,51 @@ public class GameViewer extends JFrame{
     }
 
     public void paintMain(Graphics g) {
-        g.setColor(new Color(50, 180, 255)); // Bright Ocean Blue
-        g.fillRect(0, 0, WINDOW_WIDTH, 20);
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-        g.setColor(new Color(30, 144, 255)); // Deep Sky Blue
-        g.fillRect(0, 200, WINDOW_WIDTH, 40);
+        g.setColor(Color.blue);
+        g.fillRect(0, 250, WINDOW_WIDTH, 500);
 
-        g.setColor(new Color(0, 119, 190)); // Rich Cerulean Blue
-        g.fillRect(0, 400, WINDOW_WIDTH, 240);
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 400, WINDOW_WIDTH, 200);
+        g.drawImage(fishy, 400, 400, 200, 200, this);
 
-        g.setColor(new Color(0, 77, 153)); // Deep Water Blue
-        g.fillRect(0, 600, WINDOW_WIDTH, 300);
 
-        g.setColor(new Color(0, 38, 77));  // Abyssal Dark Blue
-        g.fillRect(0, 800, WINDOW_WIDTH, 400);
+        g.setColor(Color.darkGray);
+        g.setFont(new Font("Courier New", Font.BOLD, 27));
+
+        g.drawImage(this.computerIcon, 150, 80, 100, 100, this);
+        g.drawString("Computer", 150, 80);
+
+        g.drawImage(this.playerIcon, 700, 750, 150, 150, this);
+        g.drawString("Player 1", 700, 780);
+
         for (int i = 0; i < game.getPlayer1().getHand().size(); i++) {
-            game.getPlayer1().getHand().get(i).draw(g, i * CARD_WIDTH + WIDTH_MARGIN, HEIGHT_MARGIN, false);
+            game.getPlayer1().getHand().get(i).draw(g, i * CARD_WIDTH + WIDTH_MARGIN, HEIGHT_MARGIN,false);
         }
         for (int i = 0; i < game.getComputer().getHand().size(); i++) {
-            game.getComputer().getHand().get(i).draw(g, WINDOW_WIDTH - WIDTH_MARGIN - (i + 1) * CARD_WIDTH, CARD_HEIGHT, true);
+            game.getComputer().getHand().get(i).draw(g, WINDOW_WIDTH - WIDTH_MARGIN - (i + 1) * CARD_WIDTH, CARD_HEIGHT - 30, true);
+        }
+
+        for (int i = 0; i< game.getComputer().getQuads().size(); i++) {
+            g.drawString(game.getComputer().getQuads().get(i), 150 + (40*i), 185);
+        }
+
+        for (int i = 0; i< game.getPlayer1().getQuads().size(); i++) {
+            g.drawString(game.getPlayer1().getQuads().get(i) + ", ", WINDOW_WIDTH - (game.getComputer().getQuads().size()*40) + (40*i), 890);
         }
     }
 
-    public void paintGameOver(Graphics g) {
+    public void paintGameOver(Graphics g) {list();
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
+        g.setColor(Color.blue);
+        g.fillRect(0, 250, WINDOW_WIDTH, 500);
+
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 400, WINDOW_WIDTH, 200);
+        g.drawImage(fishy, 400, 400, 200, 200, this);
     }
 }
