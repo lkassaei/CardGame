@@ -29,6 +29,7 @@ public class Game {
         this.state = 0;
         Scanner scanner = new Scanner(System.in);
 
+
         System.out.println("====================");
         System.out.println("|  TYPE NAME HERE  |");
         System.out.println("====================");
@@ -175,7 +176,7 @@ public class Game {
             }
             ArrayList<Card> result = otherPlayer.checkHand(cardRank);
             if (result.isEmpty()) {
-                System.out.println("Go Fish! " + otherPlayer.getName() + " did not have a " + cardRank + ". " + currentPlayer.getName() + " will draw.");
+                System.out.print("Go Fish! " + otherPlayer.getName() + " did not have a " + cardRank + ". " + currentPlayer.getName() + " will draw.");
                 if (!deck.isEmpty()) {
                     currentPlayer.addCard(this.deck.deal());
                 }
