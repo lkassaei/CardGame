@@ -12,14 +12,38 @@ public class GameViewer extends JFrame{
     private Image playerIcon;
 
     // Window properties
+    private final int X_ORIGIN = 0;
+    private final int Y_ORIGIN = 0;
     private final int WINDOW_WIDTH = 1000;
     private final int WINDOW_HEIGHT = 1000;
     private final int HEIGHT_MARGIN = 700;
     private final int WIDTH_MARGIN = 50;
 
+    private final int PANEL_X = 150;
+    private final int PANEL_Y = 120;
+    private final int PANEL_MARGIN = 300;
+
     // Card properties
     private final int CARD_WIDTH = 50;
     private final int CARD_HEIGHT = 100;
+
+    // Fishy/Shark properties
+    private final int SHARK_DIMENSION = 210;
+
+    // Fish properties
+    private final int FISH_DIMENSION = 200;
+
+    // Instructions properties
+    private final int INSTRUCTION_X = 220;
+    private final int STARTING_INSTRUCTION_Y = 320;
+    private final int INSTRUCTION_MARGIN = 40;
+
+    // Quad properties
+    private final int PLAYER_QUAD_X = 700;
+    private final int PLAYER_QUAD_Y = 810;
+    private final int COMPUTER_QUAD_X = 170;
+    private final int COMPUTER_QUAD_Y = 290;
+    private final int QUAD_MARGIN = 20;
 
     // Colors & Fonts
     private static final Color HEADER_COLOR = new Color(204, 140, 77); // Muted Orange
@@ -28,6 +52,14 @@ public class GameViewer extends JFrame{
     private static final Color DARK_TEXT_COLOR = new Color(70, 100, 160); // Darker Muted Blue-Grey
     private static final Font HEADER_FONT = new Font("Arial Black", Font.BOLD, 45);
     private static final Font TEXT_FONT = new Font("Arial Black", Font.BOLD, 28);
+
+    private static final Color WINNING_BACKGROUND_COLOR = new Color(80, 130, 80);
+    private static final Color WINNING_TEXT_COLOR = new Color(40, 80, 40);
+    private static final Color LOSING_BACKGROUND_COLOR = new Color(170, 80, 80);
+    private static final Color LOSING_TEXT_COLOR = new Color(120, 40, 40);
+    private static final Font GAME_OVER_FONT = new Font("Arial Black", Font.BOLD, 90);
+    private static final int GAME_OVER_X = 250;
+    private static final int GAME_OVER_Y = 450;
 
 
     public GameViewer(Game game) {
@@ -69,32 +101,32 @@ public class GameViewer extends JFrame{
     public void paintInstructions(Graphics g) {
         drawBackground(g);
 
-        drawPanel(g, 150, 120, WINDOW_WIDTH - 300, WINDOW_HEIGHT - 300, Color.WHITE, true);
+        drawPanel(g, PANEL_X, PANEL_Y, WINDOW_WIDTH - PANEL_MARGIN, WINDOW_HEIGHT - PANEL_MARGIN, Color.WHITE, true);
 
         drawText(g, "GO FISH INSTRUCTIONS", 190, 220, HEADER_FONT, HEADER_COLOR);
 
-        g.drawImage(fishy, 520, 580, 210, 210, this);
-        g.drawImage(fish, 290, 690, 200, 100, this);
-        g.drawImage(fish, 240, 600, 200, 100, this);
+        g.drawImage(fishy, 520, 580, SHARK_DIMENSION, SHARK_DIMENSION, this);
+        g.drawImage(fish, 290, 690, FISH_DIMENSION, FISH_DIMENSION/2, this);
+        g.drawImage(fish, 240, 600, FISH_DIMENSION, FISH_DIMENSION/2, this);
 
         drawPanel(g, 190, 260, WINDOW_WIDTH - 380, WINDOW_HEIGHT - 700, BACKGROUND_COLOR, true);
 
-        drawText(g, "1. Take turns asking for a card rank.", 220, 320, TEXT_FONT, TEXT_COLOR);
-        drawText(g, "2. If the player has it, you take all.", 220, 360, TEXT_FONT, TEXT_COLOR);
-        drawText(g, "3. Else, 'Go Fish!' (Draw a card)", 220, 400, TEXT_FONT, TEXT_COLOR);
-        drawText(g, "4. Collect 4-of-a-kinds or 'quads'.", 220, 440, TEXT_FONT, TEXT_COLOR);
-        drawText(g, "The Player with most quads Wins!", 220, 490, TEXT_FONT, DARK_TEXT_COLOR);
+        drawText(g, "1. Take turns asking for a card rank.", INSTRUCTION_X, STARTING_INSTRUCTION_Y, TEXT_FONT, TEXT_COLOR);
+        drawText(g, "2. If the player has it, you take all.", INSTRUCTION_X, STARTING_INSTRUCTION_Y + INSTRUCTION_MARGIN, TEXT_FONT, TEXT_COLOR);
+        drawText(g, "3. Else, 'Go Fish!' (Draw a card)", INSTRUCTION_X, STARTING_INSTRUCTION_Y + 2 * INSTRUCTION_MARGIN, TEXT_FONT, TEXT_COLOR);
+        drawText(g, "4. Collect 4-of-a-kinds or 'quads'.", INSTRUCTION_X, STARTING_INSTRUCTION_Y + 3 * INSTRUCTION_MARGIN, TEXT_FONT, TEXT_COLOR);
+        drawText(g, "The Player with most quads Wins!", INSTRUCTION_X, STARTING_INSTRUCTION_Y + 4 * INSTRUCTION_MARGIN, TEXT_FONT, DARK_TEXT_COLOR);
 
     }
 
     public void paintMain(Graphics g) {
         drawBackground(g);
 
-        drawPanel(g, 150, 120, WINDOW_WIDTH - 300, WINDOW_HEIGHT - 300, Color.WHITE, true);
+        drawPanel(g, PANEL_X, PANEL_Y, WINDOW_WIDTH - PANEL_MARGIN, WINDOW_HEIGHT - PANEL_MARGIN, Color.WHITE, true);
 
-        g.drawImage(fishy, 520, 350, 210, 210, this);
-        g.drawImage(fish, 290, 490, 200, 100, this);
-        g.drawImage(fish, 240, 400, 200, 100, this);
+        g.drawImage(fishy, 520, 350, SHARK_DIMENSION, SHARK_DIMENSION, this);
+        g.drawImage(fish, 290, 490, FISH_DIMENSION, FISH_DIMENSION/2, this);
+        g.drawImage(fish, 240, 400, FISH_DIMENSION, FISH_DIMENSION/2, this);
 
         g.drawImage(this.computerIcon, 170, 180, 100, 100, this);
         drawText(g, "Computer", 170, 180, TEXT_FONT, HEADER_COLOR);
@@ -117,20 +149,20 @@ public class GameViewer extends JFrame{
         Color panelColor;
         Color textColor;
         if (winner.getName().equals("Computer")) {
-            panelColor = new Color(170, 80, 80);
-            textColor = new Color(120, 40, 40);
+            panelColor = LOSING_BACKGROUND_COLOR;
+            textColor = LOSING_TEXT_COLOR;
         } else {
-            panelColor = new Color(80, 130, 80);
-            textColor = new Color(40, 80, 40);
+            panelColor = WINNING_BACKGROUND_COLOR;
+            textColor = WINNING_TEXT_COLOR;
         }
 
-        drawPanel(g, 150, 120, WINDOW_WIDTH - 300, WINDOW_HEIGHT - 300, panelColor, true);
-        drawText(g, winner.getName().equals("Computer") ? "You Lost." : "You Won!", 250, 450,
-                new Font("Arial Black", Font.BOLD, 90), textColor);
+        drawPanel(g, PANEL_X, PANEL_Y, WINDOW_WIDTH - PANEL_MARGIN, WINDOW_HEIGHT - PANEL_MARGIN, panelColor, true);
+        drawText(g, winner.getName().equals("Computer") ? "You Lost." : "You Won!", GAME_OVER_X, GAME_OVER_Y,
+                GAME_OVER_FONT, textColor);
     }
 
     private void drawBackground(Graphics g) {
-        g.drawImage(startBackgroundImage, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, this);
+        g.drawImage(startBackgroundImage, X_ORIGIN, Y_ORIGIN, WINDOW_WIDTH, WINDOW_HEIGHT, this);
     }
 
     private void drawPanel(Graphics g, int x, int y, int width, int height, Color color, boolean isFilled) {
@@ -172,15 +204,15 @@ public class GameViewer extends JFrame{
         int x;
         int y;
         if (current.getName().equals("Computer")) {
-            x = 170;
-            y = 290;
+            x = COMPUTER_QUAD_X;
+            y = COMPUTER_QUAD_Y;
         }
         else {
-            x = 700;
-            y = 810;
+            x = PLAYER_QUAD_X;
+            y = PLAYER_QUAD_Y;
         }
-        for (String quad : current.getQuads()) {
-            drawText(g, quad, x, y, TEXT_FONT, TEXT_COLOR);
+        for (int i = 0; i < current.getQuads().size(); i++) {
+            drawText(g, current.getQuads().get(i), x + QUAD_MARGIN * i, y, TEXT_FONT, TEXT_COLOR);
         }
     }
 }
