@@ -89,7 +89,7 @@ public class Player {
 
     // Finds the most frequent card in a player's hand
     public Card findMostFrequentCard() {
-        int num = (int)((Math.random() * 2) + 1);
+        int num = (int)((Math.random() * 5) + 1);
 
         if (num == 1) {
             int randRank = (int)(Math.random() * hand.size());

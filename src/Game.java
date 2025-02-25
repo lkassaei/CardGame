@@ -17,6 +17,7 @@ public class Game {
     private final int[] values = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
     private GameViewer window;
     private int state;
+
     public static final int INSTRUCTION_STATE = 0;
     public static final int MAIN_STATE = 1;
     public static final int GAME_OVER_STATE = 2;
@@ -26,38 +27,39 @@ public class Game {
     public Game() {
         // Get name of the player
         window = new GameViewer(this);
-        this.state = 0;
+        this.state = INSTRUCTION_STATE;
+        initializeGame();
+    }
+
+    private void initializeGame() {
+        String name1 = getPlayerName();
+        this.player1 = new Player(name1);
+        this.computer = new Player("Computer");
+        this.deck = new Deck(this.ranks, this.suits, this.values, this.window);
+        dealHands();
+        window.repaint();
+    }
+
+    private String getPlayerName() {
         Scanner scanner = new Scanner(System.in);
-
-
         System.out.println("====================");
         System.out.println("|  TYPE NAME HERE  |");
         System.out.println("====================");
         System.out.println("--------> ");
+        return scanner.nextLine();
+    }
 
-        String name1 = scanner.nextLine();
-
-        // Make players for the real player and computer
-        this.player1 = new Player(name1);
-        this.computer = new Player("Computer");
-
-        // Make a full deck for the game
-        this.deck = new Deck(this.ranks, this.suits, this.values, this.window);
-
-        // Make hands for the player and computer
-        ArrayList<Card> playerHand = new ArrayList<Card>();
-        ArrayList<Card> computerHand = new ArrayList<Card>();
-        // Deal 7 cards into each hand
+    private void dealHands() {
+        ArrayList<Card> playerHand = new ArrayList<>();
+        ArrayList<Card> computerHand = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
-           playerHand.add(deck.deal());
-           computerHand.add(deck.deal());
+            playerHand.add(deck.deal());
+            computerHand.add(deck.deal());
         }
-        // Set and sort the player and computer's hands
         player1.setHand(playerHand);
         computer.setHand(computerHand);
         player1.sortHand();
         computer.sortHand();
-        window.repaint();
     }
 
     public Player getWinningPlayer() {
@@ -121,24 +123,14 @@ public class Game {
 
     // Check if all quads have been collected
     public boolean isGameDone() {
-        if (this.computer.getQuads().size() + this.player1.getQuads().size() == 13) {
-            return true;
-        }
-        return false;
+        return computer.getQuads().size() + player1.getQuads().size() == 13;
     }
 
     // Check who has the most quads and declare them as the winner
     public void checkWin() {
-        if (this.computer.getQuads().size() > this.player1.getQuads().size()) {
-            this.winningPlayer = computer;
-            this.state = 2;
-            System.out.println("COMPUTER WINS!");
-        }
-        else {
-            this.winningPlayer = player1;
-            this.state = 2;
-            System.out.println(player1.getName() + " WINS!");
-        }
+        this.state = GAME_OVER_STATE;
+        winningPlayer = (computer.getQuads().size() > player1.getQuads().size()) ? computer : player1;
+        System.out.println(winningPlayer.getName() + " WINS!");
         window.repaint();
     }
 
@@ -157,18 +149,7 @@ public class Game {
         if (!isGameDone()) {
             if (currentPlayer.equals(player1)) {
                 // Gets the input and re-prompts until input is valid
-                while (true) {
-                    System.out.println(this.player1.getName() + "'s hand: " + this.player1.getHand() + "\n");
-                    System.out.print("What card number/royal do you want?\n");
-                    Scanner scanner = new Scanner(System.in);
-                    cardRank = scanner.nextLine();
-
-                    if (!checkValidMove(player1, cardRank)) {
-                        System.out.println("INVALID MOVE, TRY AGAIN");
-                        continue;
-                    }
-                    break;
-                }
+                cardRank = getPlayerMove();
             }
             else {
                 cardRank = this.computer.findMostFrequentCard().getRank();
@@ -176,7 +157,7 @@ public class Game {
             }
             ArrayList<Card> result = otherPlayer.checkHand(cardRank);
             if (result.isEmpty()) {
-                System.out.print("Go Fish! " + otherPlayer.getName() + " did not have a " + cardRank + ". " + currentPlayer.getName() + " will draw.");
+                System.out.println("Go Fish! " + otherPlayer.getName() + " did not have a " + cardRank + ". " + currentPlayer.getName() + " will draw. ");
                 if (!deck.isEmpty()) {
                     currentPlayer.addCard(this.deck.deal());
                 }
@@ -184,40 +165,53 @@ public class Game {
             }
             else {
                 // The other player gives all of their cards of the rank the current player asked for
-                for (Card card : result) {
-                    currentPlayer.addCard(card);
-                    otherPlayer.removeCard(card);
-                    // The other player draws the amount of cards it gave to the current player
-                    if (!this.deck.isEmpty()) {
-                        otherPlayer.addCard(this.deck.deal());
-
-                    }
-                }
-                System.out.println(currentPlayer.getName() + " took all of the " + otherPlayer.getName() + "'s " + cardRank + "s. " + otherPlayer.getName() + " will draw.");
-                window.repaint();
-
-                Card quadCard = otherPlayer.checkQuad();
-                if (quadCard != null) {
-                    System.out.println(otherPlayer.getName() + " has all the " + quadCard.getRank() + "s! They will be removed from " + otherPlayer.getName() + "'s hand.");
-                    otherPlayer.addQuad(quadCard.getRank());
-                    otherPlayer.removeQuad(otherPlayer, quadCard.getRank());
-                }
-            }
-            // Checks if the computer has any four-of-a-kinds
-            Card quadCard = currentPlayer.checkQuad();
-            // If it does, takes those four cards out of the computer's hand and puts them in its quad Array
-            if (quadCard != null) {
-                System.out.println(currentPlayer.getName() + " has all the " + quadCard.getRank() + "s! They will be removed from " + currentPlayer.getName() + "'s hand.");
-                currentPlayer.addQuad(quadCard.getRank());
-                currentPlayer.removeQuad(currentPlayer, quadCard.getRank());
+                transferCards(currentPlayer, otherPlayer, result);
                 window.repaint();
             }
+
+            handleQuad(currentPlayer);
+            handleQuad(otherPlayer);
+
             // Prints the computer's and player's quads, sorts their hands, and prints the players hand now
             System.out.println("Computer's Quads: " + this.computer.getQuads() + "  |  " + this.player1.getName() + "'s Quads: " + this.player1.getQuads());
             player1.sortHand();
             computer.sortHand();
             System.out.println(this.player1.getName() + "'s hand now: " + this.player1.getHand() + "\n");
             window.repaint();
+        }
+    }
+
+    private String getPlayerMove() {
+        Scanner scanner = new Scanner(System.in);
+        String cardRank;
+        while (true) {
+            System.out.println(player1.getName() + "'s hand: " + player1.getHand() + "\n");
+            System.out.print("What card number/royal do you want?\n");
+            cardRank = scanner.nextLine();
+            if (checkValidMove(player1, cardRank)) break;
+            System.out.println("INVALID MOVE, TRY AGAIN");
+        }
+        return cardRank;
+    }
+
+    private void transferCards(Player currentPlayer, Player otherPlayer, ArrayList<Card> cards) {
+        for (Card card : cards) {
+            currentPlayer.addCard(card);
+            otherPlayer.removeCard(card);
+            if (!deck.isEmpty()) {
+                otherPlayer.addCard(deck.deal());
+            }
+        }
+        System.out.println(currentPlayer.getName() + " took all of " + otherPlayer.getName() + "'s " + cards.get(0).getRank() + "s.");
+        System.out.println(otherPlayer.getName() + " will draw if the deck is not empty.");
+    }
+
+    private void handleQuad(Player player) {
+        Card quadCard = player.checkQuad();
+        if (quadCard != null) {
+            System.out.println(player.getName() + " has all the " + quadCard.getRank() + "s! They will be removed.");
+            player.addQuad(quadCard.getRank());
+            player.removeQuad(player, quadCard.getRank());
         }
     }
 

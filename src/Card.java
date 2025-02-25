@@ -13,6 +13,7 @@ public class Card {
     private GameViewer window;
     private final int CARD_HEIGHT = 180;
     private final int CARD_WIDTH = 116;
+    private final Image backImage = new ImageIcon("Resources/Cards/back.png").getImage();
 
     // Constructs a card with a rank, suit, and value
     public Card(String rank, String suit, int value, Image image, GameViewer window) {
@@ -64,11 +65,10 @@ public class Card {
     }
 
     public void draw(Graphics g, int x, int y, boolean isBack) {
-        if (! isBack) {
+        if (!isBack) {
             g.drawImage(image, x, y, CARD_WIDTH, CARD_HEIGHT, window);
         }
         if (isBack) {
-            Image backImage = new ImageIcon("Resources/Cards/back.png").getImage();
             g.drawImage(backImage, x, y, CARD_WIDTH, CARD_HEIGHT, window);
         }
     }
