@@ -1,8 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-public class GameViewer extends JFrame{
+public class GameViewer extends JFrame implements MouseListener {
     private Game game;
+    private String cardSelected;
 
     // Images
     private Image startBackgroundImage;
@@ -182,5 +185,40 @@ public class GameViewer extends JFrame{
         for (String quad : current.getQuads()) {
             drawText(g, quad, x, y, TEXT_FONT, TEXT_COLOR);
         }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        for (int i = 0; i < game.getPlayer1().getHand().size(); i++) {
+            int row = i / 10; // Determines which row
+            int col = i % 10; // Resets column index after 10 cards
+
+            int x = col * CARD_WIDTH + WIDTH_MARGIN;
+            int y = HEIGHT_MARGIN + (row * (CARD_HEIGHT/2));
+            if (e.getX() >= x && e.getX() <= x + CARD_WIDTH/2 && e.getY() >= y && e.getY() <= y + CARD_HEIGHT) {
+                System.out.println(game.getPlayer1().getHand().get(i).getRank());
+            }
+        }
+    }
+
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }
